@@ -13,7 +13,6 @@ export default async (kafkaInstance) => {
       return this.consumer.run({
         eachBatchAutoResolve: true,
         eachBatch: async ({ batch }) => {
-          console.log('EACH BATCH');
           for (let message of batch.messages) {
             const key = message.key?.toString("utf-8");
             const value = message.value?.toString("utf-8");
