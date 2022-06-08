@@ -1,8 +1,9 @@
-import { ECOMMERCE_GROUPS, ECOMMERCE_TOPICS } from "../constants.js";
-import kafka from "../kafka.js";
+import { ECOMMERCE_GROUPS, ECOMMERCE_TOPICS } from "../../../constants.js";
+import kafka from "../../../kafka.js";
+import { delay } from "../../../utils.js";
 
 const generateService = async (kafkaInstance) => {
-  const consumer = kafkaInstance.consumer({ groupId: ECOMMERCE_GROUPS.SEND_EMAIL });
+  const consumer = kafkaInstance.consumer({ groupId: ECOMMERCE_GROUPS.FRAUD_DETECTION });
   await consumer.connect();
 
   return {
@@ -18,21 +19,24 @@ const generateService = async (kafkaInstance) => {
         const value = message.value?.toString("utf-8");
         const timestamp = message.timestamp;
 
-        console.log("----------- Sending new Email ----------");
+        console.log("----------- Checking for fraud ----------");
+        console.log(`Partition: ${batch.partition}`);
         console.log(`Key: ${key}`);
         console.log(`Value: ${value}`);
         console.log(`Time stamp: ${timestamp}`);
-        console.log('Email sended succesfully!');
+        // await delay(4000);
+        console.log("---------- Order validated! -----------");
       }
     },
 
     async run(topics) {
       await this.subscribe(topics);
       return this.consumer.run({
+        autoCommitThreshold: 1,
         eachBatch: this.handleBatch,
       });
     },
   };
 };
 
-generateService(kafka).then(service => service.run([ECOMMERCE_TOPICS.SEND_EMAIL]));
+generateService(kafka).then(service => service.run([ECOMMERCE_TOPICS.NEW_ORDER]));
