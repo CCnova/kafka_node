@@ -10,5 +10,5 @@ export const ECOMMERCE_TOPICS = {
 export const ECOMMERCE_GROUPS = {
   FRAUD_DETECTION: `${prefixes.ECOMMERCE}_FRAUD_DETECTION`,
   SEND_EMAIL: `${prefixes.ECOMMERCE}_SEND_EMAIL`,
-  LOG: `${prefixes}_LOG`,
+  LOG: `${prefixes.ECOMMERCE}_LOG`,
 }

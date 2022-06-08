@@ -1,5 +1,6 @@
 import { ECOMMERCE_GROUPS, ECOMMERCE_TOPICS } from "../constants.js";
 import kafka from "../kafka.js";
+import { delay } from "../utils.js";
 
 const generateService = async (kafkaInstance) => {
   const consumer = kafkaInstance.consumer({ groupId: ECOMMERCE_GROUPS.FRAUD_DETECTION });
@@ -23,12 +24,15 @@ const generateService = async (kafkaInstance) => {
         console.log(`Key: ${key}`);
         console.log(`Value: ${value}`);
         console.log(`Time stamp: ${timestamp}`);
+        await delay(4000);
+        console.log("---------- Order validated! -----------");
       }
     },
 
     async run(topics) {
       await this.subscribe(topics);
       return this.consumer.run({
+        autoCommitThreshold: 1,
         eachBatch: this.handleBatch,
       });
     },
