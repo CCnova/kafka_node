@@ -24,7 +24,7 @@ const generateService = async (kafkaInstance) => {
         console.log(`Key: ${key}`);
         console.log(`Value: ${value}`);
         console.log(`Time stamp: ${timestamp}`);
-        await delay(4000);
+        // await delay(4000);
         console.log("---------- Order validated! -----------");
       }
     },
