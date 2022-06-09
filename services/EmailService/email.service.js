@@ -1,8 +1,8 @@
-import { ECOMMERCE_GROUPS, ECOMMERCE_TOPICS, prefixes } from "../constants.js";
-import kafka from "../kafka.js";
+import { ECOMMERCE_GROUPS, ECOMMERCE_TOPICS } from "../../constants.js";
+import kafka from "../../kafka.js";
 
 const generateService = async (kafkaInstance) => {
-  const consumer = kafkaInstance.consumer({ groupId: ECOMMERCE_GROUPS.LOG });
+  const consumer = kafkaInstance.consumer({ groupId: ECOMMERCE_GROUPS.SEND_EMAIL });
   await consumer.connect();
 
   return {
@@ -17,8 +17,8 @@ const generateService = async (kafkaInstance) => {
         const key = message.key?.toString("utf-8");
         const value = message.value?.toString("utf-8");
         const timestamp = message.timestamp;
-        console.log("----------- LOG ----------");
-        console.log(`Topic: ${batch.topic}`);
+
+        console.log("----------- Sending new Email ----------");
         console.log(`Key: ${key}`);
         console.log(`Value: ${value}`);
         console.log(`Time stamp: ${timestamp}`);
@@ -29,11 +29,10 @@ const generateService = async (kafkaInstance) => {
     async run(topics) {
       await this.subscribe(topics);
       return this.consumer.run({
-        eachBatchAutoResolve: true,
         eachBatch: this.handleBatch,
       });
     },
   };
 };
 
-generateService(kafka).then(service => service.run([new RegExp(`${prefixes.ECOMMERCE}.*`)]));
+generateService(kafka).then(service => service.run([ECOMMERCE_TOPICS.SEND_EMAIL]));
